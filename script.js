@@ -24,7 +24,38 @@ let diaAtual = "segunda";
 let marmitaAtualIndex = 0;
 let metaDiaria = 0;
 
-// -------- TROCAR DIA --------
+// ===============================
+// SALVAR E CARREGAR DADOS
+// ===============================
+
+function salvarDados() {
+  const dados = {
+    marmitas,
+    metaDiaria,
+    diaAtual,
+    marmitaAtualIndex
+  };
+
+  localStorage.setItem("nutriDados", JSON.stringify(dados));
+}
+
+function carregarDados() {
+  const dadosSalvos = localStorage.getItem("nutriDados");
+
+  if (dadosSalvos) {
+    const dados = JSON.parse(dadosSalvos);
+
+    marmitas = dados.marmitas || marmitas;
+    metaDiaria = dados.metaDiaria || 0;
+    diaAtual = dados.diaAtual || "segunda";
+    marmitaAtualIndex = dados.marmitaAtualIndex || 0;
+  }
+}
+
+// ===============================
+// TROCAR DIA
+// ===============================
+
 function trocarMarmita() {
   diaAtual = document.getElementById("diaSelect").value;
 
@@ -36,9 +67,13 @@ function trocarMarmita() {
 
   atualizarSelectMarmitas();
   atualizarLista();
+  salvarDados();
 }
 
-// -------- CRIAR NOVA MARMITA --------
+// ===============================
+// CRIAR NOVA MARMITA
+// ===============================
+
 function criarNovaMarmita() {
   const nova = {
     nome: "Marmita " + (marmitas[diaAtual].length + 1),
@@ -50,15 +85,23 @@ function criarNovaMarmita() {
 
   atualizarSelectMarmitas();
   atualizarLista();
+  salvarDados();
 }
 
-// -------- TROCAR MARMITA DO DIA --------
+// ===============================
+// TROCAR MARMITA DO DIA
+// ===============================
+
 function trocarMarmitaSelecionada() {
   marmitaAtualIndex = Number(document.getElementById("marmitaSelect").value);
   atualizarLista();
+  salvarDados();
 }
 
-// -------- ADICIONAR ALIMENTO --------
+// ===============================
+// ADICIONAR ALIMENTO
+// ===============================
+
 function addAlimento() {
   const alimento = document.getElementById("alimentoSelect").value;
   const gramas = Number(document.getElementById("gramasInput").value);
@@ -77,29 +120,36 @@ function addAlimento() {
   });
 
   document.getElementById("gramasInput").value = "";
+
   atualizarLista();
+  salvarDados();
 }
 
-// -------- REMOVER ALIMENTO --------
+// ===============================
+// REMOVER ALIMENTO
+// ===============================
+
 function removerAlimento(index) {
   marmitas[diaAtual][marmitaAtualIndex].alimentos.splice(index, 1);
+
   atualizarLista();
+  salvarDados();
 }
 
-// -------- ATUALIZAR LISTA --------
+// ===============================
+// ATUALIZAR LISTA
+// ===============================
+
 function atualizarLista() {
   const lista = document.getElementById("marmitaList");
-  const totalCalSpan = document.getElementById("totalCal");
-
   lista.innerHTML = "";
 
   if (marmitas[diaAtual].length === 0) {
-    totalCalSpan.textContent = "0";
+    document.getElementById("totalCal").textContent = "0";
     return;
   }
 
   const marmitaAtual = marmitas[diaAtual][marmitaAtualIndex];
-
   let totalMarmita = 0;
 
   marmitaAtual.alimentos.forEach((item, index) => {
@@ -113,16 +163,16 @@ function atualizarLista() {
     lista.appendChild(li);
   });
 
-  // Mostra total da marmita atual (opcional)
   document.getElementById("totalMarmitaAtual").textContent = totalMarmita.toFixed(0);
 
-  // Atualiza total do dia corretamente
   atualizarTotalDia();
   atualizarTotalSemana();
 }
 
+// ===============================
+// SELECT DE MARMITAS
+// ===============================
 
-// -------- SELECT DE MARMITAS --------
 function atualizarSelectMarmitas() {
   const select = document.getElementById("marmitaSelect");
   select.innerHTML = "";
@@ -137,7 +187,10 @@ function atualizarSelectMarmitas() {
   select.value = marmitaAtualIndex;
 }
 
-// -------- META --------
+// ===============================
+// META
+// ===============================
+
 function salvarMeta() {
   const meta = Number(document.getElementById("metaInput").value);
 
@@ -147,7 +200,9 @@ function salvarMeta() {
   }
 
   metaDiaria = meta;
+
   atualizarStatusDia();
+  salvarDados();
 }
 
 function atualizarStatusDia() {
@@ -170,9 +225,9 @@ function atualizarStatusDia() {
   }
 }
 
-// Inicialização
-criarNovaMarmita();
-
+// ===============================
+// TOTAL DIA
+// ===============================
 
 function atualizarTotalDia() {
   let totalDia = 0;
@@ -188,6 +243,9 @@ function atualizarTotalDia() {
   atualizarStatusDia();
 }
 
+// ===============================
+// TOTAL SEMANA
+// ===============================
 
 function atualizarTotalSemana() {
   let totalSemana = 0;
@@ -201,4 +259,17 @@ function atualizarTotalSemana() {
   }
 
   document.getElementById("totalSemana").textContent = totalSemana.toFixed(0);
+}
+
+// ===============================
+// INICIALIZAÇÃO
+// ===============================
+
+carregarDados();
+
+if (marmitas[diaAtual].length === 0) {
+  criarNovaMarmita();
+} else {
+  atualizarSelectMarmitas();
+  atualizarLista();
 }
