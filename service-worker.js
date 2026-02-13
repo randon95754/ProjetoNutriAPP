@@ -1,4 +1,4 @@
-const CACHE_NAME = "nutriapp-v4";
+const CACHE_NAME = "nutriapp-v5";
 
 const urlsToCache = [
   "/",
