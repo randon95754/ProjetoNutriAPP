@@ -1,0 +1,189 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f2f6f4;
+  color: #2e2e2e;
+}
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, #6fcf97, #56c596);
+  color: white;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+}
+
+header p {
+  margin-top: 8px;
+  opacity: 0.95;
+}
+
+/* NAV */
+.tabs {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.tabs button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 999px;
+  background: #e8f5ee;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.tabs button:hover {
+  background: #cdeedd;
+}
+
+/* MAIN */
+main {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* ABAS */
+.aba {
+  display: none;
+}
+
+.aba.ativa {
+  display: block;
+}
+
+/* CARD */
+.aba {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* TITULOS */
+h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* FORM */
+label {
+  font-weight: 600;
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #6fcf97;
+}
+
+/* BOTÕES */
+button {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  background: #6fcf97;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #57b889;
+}
+
+/* LISTA */
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+
+li {
+  background: #f6fdf9;
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+li button {
+  background: #ff6b6b;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}
+
+/* STATUS */
+#statusDia {
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+#statusDia::before {
+  content: "● ";
+}
+
+#statusDia:contains("Dentro") {
+  color: #2ecc71;
+}
+
+#statusDia:contains("Levemente") {
+  color: #f1c40f;
+}
+
+#statusDia:contains("Acima") {
+  color: #e74c3c;
+}
+
+/* SEPARADORES */
+hr {
+  border: none;
+  height: 1px;
+  background: #eee;
+  margin: 24px 0;
+}
+
+/* RESPONSIVO */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 1.7rem;
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
+}

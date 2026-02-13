@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nutri App</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<header>
+  <h1>🍽️ Nutri App</h1>
+  <p>Seu controle alimentar de forma leve e divertida</p>
+</header>
+
+<nav class="tabs">
+  <button type="button" onclick="mostrarAba('marmita')">Marmita Semanal</button>
+  <button type="button" onclick="mostrarAba('comi')">O que já comi</button>
+  <button type="button" onclick="mostrarAba('conquistas')">Conquistas</button>
+  <button type="button" onclick="mostrarAba('avaliacao')">Avaliação Diária</button>
+</nav>
+
+<main>
+
+  <!-- MARMITA -->
+  <section id="marmita" class="aba ativa">
+    <h2>Marmita da Semana</h2>
+
+    <label>Meta diária (kcal)</label>
+    <input id="metaInput" type="number" placeholder="Ex: 2200" />
+    <button type="button" onclick="salvarMeta()">Salvar Meta</button>
+
+    <hr>
+
+    <label>Dia da semana</label>
+    <select id="diaSelect" onchange="trocarMarmita()">
+      <option value="segunda">Segunda</option>
+      <option value="terca">Terça</option>
+      <option value="quarta">Quarta</option>
+      <option value="quinta">Quinta</option>
+      <option value="sexta">Sexta</option>
+      <option value="sabado">Sábado</option>
+      <option value="domingo">Domingo</option>
+    </select>
+
+    <label>Marmitas do dia</label>
+    <select id="marmitaSelect" onchange="trocarMarmitaSelecionada()"></select>
+    <button type="button" onclick="criarNovaMarmita()">+ Nova Marmita</button>
+
+    <hr>
+
+    <label>Alimento</label>
+    <select id="alimentoSelect">
+      <option value="">Selecione</option>
+      <option value="frango">Frango</option>
+      <option value="arroz">Arroz</option>
+      <option value="ovo">Ovo</option>
+      <option value="carne">Carne</option>
+      <option value="batata">Batata</option>
+      <option value="macarrao">Macarrão</option>
+      <option value="creme_galinha">Creme de galinha</option>
+      <option value="maca">Maçã</option>
+    </select>
+
+    <label>Gramas</label>
+    <input id="gramasInput" type="number" placeholder="Ex: 200" />
+
+    <button type="button" onclick="addAlimento()">Adicionar</button>
+
+    <hr>
+
+    <ul id="marmitaList"></ul>
+
+    <p>Total da marmita atual: 
+      <strong><span id="totalMarmitaAtual">0</span> kcal</strong>
+    </p>
+
+    <p>Total do dia: 
+      <strong><span id="totalCal">0</span> kcal</strong>
+    </p>
+
+    <p id="statusDia"></p>
+
+    <hr>
+
+    <p>Total da semana: 
+      <strong><span id="totalSemana">0</span> kcal</strong>
+    </p>
+  </section>
+
+  <!-- OUTRAS ABAS -->
+  <section id="comi" class="aba">
+    <h2>O que já comi</h2>
+    <p>Em desenvolvimento</p>
+  </section>
+
+  <section id="conquistas" class="aba">
+    <h2>Conquistas</h2>
+    <p>Em desenvolvimento</p>
+  </section>
+
+  <section id="avaliacao" class="aba">
+    <h2>Avaliação Diária</h2>
+    <p>Em desenvolvimento</p>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+
+<script>
+  function mostrarAba(id) {
+    document.querySelectorAll('.aba').forEach(aba => {
+      aba.classList.remove('ativa');
+    });
+    document.getElementById(id).classList.add('ativa');
+  }
+
+  // Registro do Service Worker (PWA)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registrado"))
+        .catch(err => console.log("Erro no SW:", err));
+    });
+  }
+</script>
+
+</body>
+</html>
