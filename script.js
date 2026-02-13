@@ -281,3 +281,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   atualizarTotalSemana();
 });
+
+// ===============================
+// REMOVER MARMITA
+// ===============================
+
+function removerMarmita() {
+
+  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
+    return;
+  }
+
+  const confirmar = confirm("Deseja realmente remover esta marmita?");
+  if (!confirmar) return;
+
+  marmitas[diaAtual].splice(marmitaAtualIndex, 1);
+
+  // Ajustar índice
+  if (marmitaAtualIndex > 0) {
+    marmitaAtualIndex--;
+  } else {
+    marmitaAtualIndex = 0;
+  }
+
+  // Se não existir mais nenhuma marmita, cria uma nova vazia
+  if (marmitas[diaAtual].length === 0) {
+    criarNovaMarmita();
+  } else {
+    atualizarSelectMarmitas();
+    atualizarLista();
+    salvarDados();
+  }
+}
