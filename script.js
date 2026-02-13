@@ -42,14 +42,14 @@ function salvarDados() {
 function carregarDados() {
   const dadosSalvos = localStorage.getItem("nutriDados");
 
-  if (dadosSalvos) {
-    const dados = JSON.parse(dadosSalvos);
+  if (!dadosSalvos) return;
 
-    marmitas = dados.marmitas || marmitas;
-    metaDiaria = dados.metaDiaria || 0;
-    diaAtual = dados.diaAtual || "segunda";
-    marmitaAtualIndex = dados.marmitaAtualIndex || 0;
-  }
+  const dados = JSON.parse(dadosSalvos);
+
+  marmitas = dados.marmitas || marmitas;
+  metaDiaria = dados.metaDiaria || 0;
+  diaAtual = dados.diaAtual || "segunda";
+  marmitaAtualIndex = dados.marmitaAtualIndex || 0;
 }
 
 // ===============================
@@ -59,7 +59,8 @@ function carregarDados() {
 function trocarMarmita() {
   diaAtual = document.getElementById("diaSelect").value;
 
-  if (marmitas[diaAtual].length === 0) {
+  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
+    marmitas[diaAtual] = [];
     criarNovaMarmita();
   } else {
     marmitaAtualIndex = 0;
@@ -131,7 +132,6 @@ function addAlimento() {
 
 function removerAlimento(index) {
   marmitas[diaAtual][marmitaAtualIndex].alimentos.splice(index, 1);
-
   atualizarLista();
   salvarDados();
 }
@@ -144,7 +144,7 @@ function atualizarLista() {
   const lista = document.getElementById("marmitaList");
   lista.innerHTML = "";
 
-  if (marmitas[diaAtual].length === 0) {
+  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
     document.getElementById("totalCal").textContent = "0";
     return;
   }
@@ -163,7 +163,8 @@ function atualizarLista() {
     lista.appendChild(li);
   });
 
-  document.getElementById("totalMarmitaAtual").textContent = totalMarmita.toFixed(0);
+  document.getElementById("totalMarmitaAtual").textContent =
+    totalMarmita.toFixed(0);
 
   atualizarTotalDia();
   atualizarTotalSemana();
@@ -200,7 +201,6 @@ function salvarMeta() {
   }
 
   metaDiaria = meta;
-
   atualizarStatusDia();
   salvarDados();
 }
@@ -218,11 +218,8 @@ function atualizarStatusDia() {
 
   const status = document.getElementById("statusDia");
 
-  if (totalDia <= metaDiaria) {
-    status.textContent = "Dentro da meta";
-  } else {
-    status.textContent = "Acima da meta";
-  }
+  status.textContent =
+    totalDia <= metaDiaria ? "Dentro da meta" : "Acima da meta";
 }
 
 // ===============================
@@ -232,13 +229,14 @@ function atualizarStatusDia() {
 function atualizarTotalDia() {
   let totalDia = 0;
 
-  marmitas[diaAtual].forEach(marmita => {
-    marmita.alimentos.forEach(alimento => {
-      totalDia += alimento.kcal;
+  marmitas[diaAtual].forEach(m => {
+    m.alimentos.forEach(a => {
+      totalDia += a.kcal;
     });
   });
 
-  document.getElementById("totalCal").textContent = totalDia.toFixed(0);
+  document.getElementById("totalCal").textContent =
+    totalDia.toFixed(0);
 
   atualizarStatusDia();
 }
@@ -251,25 +249,35 @@ function atualizarTotalSemana() {
   let totalSemana = 0;
 
   for (let dia in marmitas) {
-    marmitas[dia].forEach(marmita => {
-      marmita.alimentos.forEach(alimento => {
-        totalSemana += alimento.kcal;
+    marmitas[dia].forEach(m => {
+      m.alimentos.forEach(a => {
+        totalSemana += a.kcal;
       });
     });
   }
 
-  document.getElementById("totalSemana").textContent = totalSemana.toFixed(0);
+  document.getElementById("totalSemana").textContent =
+    totalSemana.toFixed(0);
 }
 
 // ===============================
-// INICIALIZAÇÃO
+// INICIALIZAÇÃO CORRETA
 // ===============================
 
-carregarDados();
+document.addEventListener("DOMContentLoaded", () => {
 
-if (marmitas[diaAtual].length === 0) {
-  criarNovaMarmita();
-} else {
-  atualizarSelectMarmitas();
-  atualizarLista();
-}
+  carregarDados();
+
+  document.getElementById("diaSelect").value = diaAtual;
+  document.getElementById("metaInput").value = metaDiaria;
+
+  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
+    marmitas[diaAtual] = [];
+    criarNovaMarmita();
+  } else {
+    atualizarSelectMarmitas();
+    atualizarLista();
+  }
+
+  atualizarTotalSemana();
+});
