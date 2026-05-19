@@ -1,4 +1,7 @@
+/* ===================================== */
 /* RESET */
+/* ===================================== */
+
 * {
   box-sizing: border-box;
   font-family: "Segoe UI", Arial, sans-serif;
@@ -10,180 +13,400 @@ body {
   color: #2e2e2e;
 }
 
+/* ===================================== */
 /* HEADER */
+/* ===================================== */
+
 header {
   background: linear-gradient(135deg, #6fcf97, #56c596);
   color: white;
-  padding: 32px 16px;
+  padding: 36px 20px;
   text-align: center;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 header h1 {
   margin: 0;
-  font-size: 2.2rem;
+  font-size: 2.3rem;
+  font-weight: 800;
 }
 
 header p {
-  margin-top: 8px;
+  margin-top: 10px;
   opacity: 0.95;
+  font-size: 1rem;
 }
 
+/* ===================================== */
 /* NAV */
+/* ===================================== */
+
 .tabs {
   display: flex;
   gap: 10px;
-  padding: 12px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  padding: 14px;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .tabs button {
   flex: 1;
-  padding: 12px;
+
+  padding: 13px;
+
   border: none;
   border-radius: 999px;
+
   background: #e8f5ee;
+
   cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
+
+  font-weight: 700;
+  font-size: 0.95rem;
+
+  color: #2e2e2e;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .tabs button:hover {
-  background: #cdeedd;
+  background: #d5f0e2;
+
+  transform: translateY(-2px);
 }
 
+.tabs button:active {
+  transform: scale(0.98);
+}
+
+/* ===================================== */
 /* MAIN */
+/* ===================================== */
+
 main {
-  padding: 20px;
+  padding: 24px;
   max-width: 900px;
   margin: auto;
 }
 
+/* ===================================== */
 /* ABAS */
+/* ===================================== */
+
 .aba {
   display: none;
 }
 
 .aba.ativa {
   display: block;
-}
 
-/* CARD */
-.aba {
   background: white;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+
+  border-radius: 26px;
+
+  padding: 28px;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+
+  animation: fade 0.25s ease;
 }
 
+/* ===================================== */
+/* ANIMAÇÃO */
+/* ===================================== */
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================== */
 /* TITULOS */
+/* ===================================== */
+
 h2 {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+
+  font-size: 1.8rem;
+  font-weight: 700;
+
+  color: #2d2d2d;
 }
 
+/* ===================================== */
 /* FORM */
+/* ===================================== */
+
 label {
-  font-weight: 600;
+  font-weight: 700;
+
   display: block;
-  margin-top: 16px;
-  margin-bottom: 6px;
+
+  margin-top: 18px;
+  margin-bottom: 8px;
+
+  color: #3a3a3a;
 }
 
 input,
 select,
 textarea {
   width: 100%;
-  padding: 14px;
+
+  padding: 14px 16px;
+
   border-radius: 16px;
-  border: 1px solid #ddd;
+
+  border: 1px solid #dfe7e2;
+
+  background: #ffffff;
+
   font-size: 1rem;
+
   outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   border-color: #6fcf97;
+
+  box-shadow: 0 0 0 4px rgba(111, 207, 151, 0.15);
 }
 
+/* ===================================== */
 /* BOTÕES */
+/* ===================================== */
+
 button {
-  margin-top: 12px;
-  padding: 14px;
+  margin-top: 14px;
+
+  padding: 14px 18px;
+
   border-radius: 999px;
+
   border: none;
+
   background: #6fcf97;
+
   color: white;
+
   font-weight: 700;
+  font-size: 0.95rem;
+
   cursor: pointer;
-  transition: 0.2s;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 button:hover {
   background: #57b889;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px rgba(87, 184, 137, 0.25);
 }
 
+button:active {
+  transform: scale(0.98);
+}
+
+/* ===================================== */
 /* LISTA */
+/* ===================================== */
+
 ul {
   list-style: none;
+
   padding: 0;
-  margin-top: 16px;
+
+  margin-top: 20px;
 }
 
 li {
-  background: #f6fdf9;
-  padding: 14px 16px;
-  border-radius: 16px;
-  margin-bottom: 10px;
+  background: linear-gradient(135deg, #f8fdf9, #eef9f2);
+
+  padding: 16px 18px;
+
+  border-radius: 18px;
+
+  margin-bottom: 12px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  border: 1px solid rgba(111, 207, 151, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+li:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
 }
 
 li button {
   background: #ff6b6b;
+
   padding: 8px 12px;
+
   font-size: 0.8rem;
+
+  margin-top: 0;
 }
 
+li button:hover {
+  background: #f05252;
+}
+
+/* ===================================== */
 /* STATUS */
+/* ===================================== */
+
 #statusDia {
-  margin-top: 12px;
-  font-weight: 600;
+  margin-top: 16px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+
+  border-radius: 999px;
+
+  background: rgba(111, 207, 151, 0.12);
+
+  color: #2e9d60;
+
+  font-weight: 700;
 }
 
 #statusDia::before {
-  content: "● ";
+  content: "●";
+  font-size: 0.8rem;
 }
 
-#statusDia:contains("Dentro") {
-  color: #2ecc71;
+/* ===================================== */
+/* TEXTOS */
+/* ===================================== */
+
+p {
+  line-height: 1.5;
 }
 
-#statusDia:contains("Levemente") {
-  color: #f1c40f;
+strong {
+  color: #3a3a3a;
 }
 
-#statusDia:contains("Acima") {
-  color: #e74c3c;
-}
-
+/* ===================================== */
 /* SEPARADORES */
+/* ===================================== */
+
 hr {
   border: none;
+
   height: 1px;
-  background: #eee;
-  margin: 24px 0;
+
+  background: linear-gradient(to right, transparent, #dddddd, transparent);
+
+  margin: 28px 0;
 }
 
+/* ===================================== */
+/* SCROLLBAR */
+/* ===================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf2ef;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5d5cc;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aebfb6;
+}
+
+/* ===================================== */
 /* RESPONSIVO */
+/* ===================================== */
+
 @media (max-width: 600px) {
+  header {
+    padding: 28px 16px;
+  }
+
   header h1 {
-    font-size: 1.7rem;
+    font-size: 1.9rem;
+  }
+
+  header p {
+    font-size: 0.95rem;
   }
 
   .tabs {
     flex-direction: column;
+  }
+
+  main {
+    padding: 16px;
+  }
+
+  .aba.ativa {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  li button {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
   }
 }

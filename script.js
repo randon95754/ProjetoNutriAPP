@@ -1,3 +1,17 @@
+// ===============================
+// CONSTANTES
+// ===============================
+
+const DIAS = [
+  "segunda",
+  "terca",
+  "quarta",
+  "quinta",
+  "sexta",
+  "sabado",
+  "domingo",
+];
+
 // kcal por 100g
 const calorias = {
   frango: 165,
@@ -7,309 +21,308 @@ const calorias = {
   batata: 77,
   queijo: 300,
   creme_galinha: 90,
-  maca: 52
+  maca: 52,
 };
 
-let marmitas = {
-  segunda: [],
-  terca: [],
-  quarta: [],
-  quinta: [],
-  sexta: [],
-  sabado: [],
-  domingo: []
+// ===============================
+// ESTADO GLOBAL
+// ===============================
+
+const state = {
+  marmitas: {},
+  diaAtual: "segunda",
+  marmitaAtualIndex: 0,
+  metaDiaria: 0,
 };
 
-let diaAtual = "segunda";
-let marmitaAtualIndex = 0;
-let metaDiaria = 0;
+// Inicializar dias de forma limpa
+DIAS.forEach((dia) => {
+  state.marmitas[dia] = [];
+});
 
 // ===============================
-// SALVAR E CARREGAR DADOS
+// CACHE DOM
 // ===============================
+
+const elements = {
+  diaSelect: document.getElementById("diaSelect"),
+  marmitaSelect: document.getElementById("marmitaSelect"),
+  alimentoSelect: document.getElementById("alimentoSelect"),
+  gramasInput: document.getElementById("gramasInput"),
+  metaInput: document.getElementById("metaInput"),
+  marmitaList: document.getElementById("marmitaList"),
+  totalCal: document.getElementById("totalCal"),
+  totalSemana: document.getElementById("totalSemana"),
+  totalMarmitaAtual: document.getElementById("totalMarmitaAtual"),
+  statusDia: document.getElementById("statusDia"),
+};
+
+// ===============================
+// STORAGE (COM DEBOUNCE)
+// ===============================
+
+let saveTimeout;
 
 function salvarDados() {
-  const dados = {
-    marmitas,
-    metaDiaria,
-    diaAtual,
-    marmitaAtualIndex
-  };
-
-  localStorage.setItem("nutriDados", JSON.stringify(dados));
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    localStorage.setItem("nutriDados", JSON.stringify(state));
+  }, 300);
 }
 
 function carregarDados() {
-  const dadosSalvos = localStorage.getItem("nutriDados");
+  try {
+    const dadosSalvos = localStorage.getItem("nutriDados");
+    if (!dadosSalvos) return;
 
-  if (!dadosSalvos) return;
-
-  const dados = JSON.parse(dadosSalvos);
-
-  marmitas = dados.marmitas || marmitas;
-  metaDiaria = dados.metaDiaria || 0;
-  diaAtual = dados.diaAtual || "segunda";
-  marmitaAtualIndex = dados.marmitaAtualIndex || 0;
+    const dados = JSON.parse(dadosSalvos);
+    state.marmitas = dados.marmitas || state.marmitas;
+    state.metaDiaria = dados.metaDiaria || 0;
+    state.diaAtual = dados.diaAtual || "segunda";
+    state.marmitaAtualIndex = dados.marmitaAtualIndex || 0;
+  } catch (erro) {
+    console.error("Erro ao carregar dados:", erro);
+  }
 }
 
 // ===============================
-// TROCAR DIA
+// CÁLCULOS
+// ===============================
+
+function calcularTotalMarmita(marmita) {
+  if (!marmita || !marmita.alimentos) return 0;
+  return marmita.alimentos.reduce(
+    (total, alimento) => total + alimento.kcal,
+    0,
+  );
+}
+
+function calcularTotalDia(dia) {
+  return state.marmitas[dia].reduce((total, marmita) => {
+    return total + calcularTotalMarmita(marmita);
+  }, 0);
+}
+
+function calcularTotalSemana() {
+  return DIAS.reduce((total, dia) => total + calcularTotalDia(dia), 0);
+}
+
+// ===============================
+// RENDERIZAÇÃO DA INTERFACE
+// ===============================
+
+function render() {
+  atualizarSelectMarmitas();
+  atualizarLista();
+
+  // Atualiza os painéis numéricos de calorias
+  const totalDia = calcularTotalDia(state.diaAtual);
+  elements.totalCal.textContent = totalDia.toFixed(0);
+  elements.totalSemana.textContent = calcularTotalSemana().toFixed(0);
+
+  atualizarStatusDia(totalDia);
+}
+
+// ===============================
+// AÇÕES E NAVEGAÇÃO
 // ===============================
 
 function trocarMarmita() {
-  diaAtual = document.getElementById("diaSelect").value;
+  state.diaAtual = elements.diaSelect.value;
 
-  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
-    marmitas[diaAtual] = [];
+  if (state.marmitas[state.diaAtual].length === 0) {
     criarNovaMarmita();
   } else {
-    marmitaAtualIndex = 0;
+    state.marmitaAtualIndex = 0;
+    render();
+    salvarDados();
   }
-
-  atualizarSelectMarmitas();
-  atualizarLista();
-  salvarDados();
 }
-
-// ===============================
-// CRIAR NOVA MARMITA
-// ===============================
 
 function criarNovaMarmita() {
   const nova = {
-    nome: "Marmita " + (marmitas[diaAtual].length + 1),
-    alimentos: []
+    nome: `Marmita ${state.marmitas[state.diaAtual].length + 1}`,
+    alimentos: [],
   };
 
-  marmitas[diaAtual].push(nova);
-  marmitaAtualIndex = marmitas[diaAtual].length - 1;
+  state.marmitas[state.diaAtual].push(nova);
+  state.marmitaAtualIndex = state.marmitas[state.diaAtual].length - 1;
 
-  atualizarSelectMarmitas();
-  atualizarLista();
+  render();
   salvarDados();
 }
-
-// ===============================
-// TROCAR MARMITA DO DIA
-// ===============================
 
 function trocarMarmitaSelecionada() {
-  marmitaAtualIndex = Number(document.getElementById("marmitaSelect").value);
-  atualizarLista();
+  state.marmitaAtualIndex = Number(elements.marmitaSelect.value);
+  render();
   salvarDados();
 }
 
 // ===============================
-// ADICIONAR ALIMENTO
+// GERENCIAMENTO DE ALIMENTOS
 // ===============================
 
 function addAlimento() {
-  const alimento = document.getElementById("alimentoSelect").value;
-  const gramas = Number(document.getElementById("gramasInput").value);
+  const alimento = elements.alimentoSelect.value;
+  const gramas = Number(elements.gramasInput.value);
 
   if (!alimento || gramas <= 0) {
-    alert("Selecione alimento e informe gramas.");
+    alert("Selecione um alimento e informe as gramas corretamente.");
     return;
   }
 
   const kcal = (calorias[alimento] * gramas) / 100;
 
-  marmitas[diaAtual][marmitaAtualIndex].alimentos.push({
+  state.marmitas[state.diaAtual][state.marmitaAtualIndex].alimentos.push({
     alimento,
     gramas,
-    kcal
+    kcal,
   });
 
-  document.getElementById("gramasInput").value = "";
-
-  atualizarLista();
+  elements.gramasInput.value = "";
+  render();
   salvarDados();
 }
-
-// ===============================
-// REMOVER ALIMENTO
-// ===============================
 
 function removerAlimento(index) {
-  marmitas[diaAtual][marmitaAtualIndex].alimentos.splice(index, 1);
-  atualizarLista();
+  state.marmitas[state.diaAtual][state.marmitaAtualIndex].alimentos.splice(
+    index,
+    1,
+  );
+  render();
   salvarDados();
 }
 
 // ===============================
-// ATUALIZAR LISTA
+// ATUALIZAÇÃO DE COMPONENTES DOM
 // ===============================
 
 function atualizarLista() {
-  const lista = document.getElementById("marmitaList");
-  lista.innerHTML = "";
+  elements.marmitaList.innerHTML = "";
+  const marmitasDia = state.marmitas[state.diaAtual];
 
-  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
-    document.getElementById("totalCal").textContent = "0";
+  if (!marmitasDia || marmitasDia.length === 0) {
+    elements.totalMarmitaAtual.textContent = "0";
     return;
   }
 
-  const marmitaAtual = marmitas[diaAtual][marmitaAtualIndex];
-  let totalMarmita = 0;
+  const marmitaAtual = marmitasDia[state.marmitaAtualIndex];
+  elements.totalMarmitaAtual.textContent =
+    calcularTotalMarmita(marmitaAtual).toFixed(0);
 
   marmitaAtual.alimentos.forEach((item, index) => {
-    totalMarmita += item.kcal;
-
     const li = document.createElement("li");
-    li.innerHTML = `
-      ${item.alimento} - ${item.gramas}g (${item.kcal.toFixed(0)} kcal)
-      <button onclick="removerAlimento(${index})">❌</button>
-    `;
-    lista.appendChild(li);
+
+    // Capitaliza a primeira letra do alimento para estética
+    const nomeAlimento =
+      item.alimento.charAt(0).toUpperCase() +
+      item.alimento.slice(1).replace("_", " ");
+
+    const texto = document.createTextNode(
+      `${nomeAlimento} - ${item.gramas}g (${item.kcal.toFixed(0)} kcal)`,
+    );
+
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.addEventListener("click", () => removerAlimento(index));
+
+    li.appendChild(texto);
+    li.appendChild(btn);
+    elements.marmitaList.appendChild(li);
   });
-
-  document.getElementById("totalMarmitaAtual").textContent =
-    totalMarmita.toFixed(0);
-
-  atualizarTotalDia();
-  atualizarTotalSemana();
 }
-
-// ===============================
-// SELECT DE MARMITAS
-// ===============================
 
 function atualizarSelectMarmitas() {
-  const select = document.getElementById("marmitaSelect");
-  select.innerHTML = "";
+  elements.marmitaSelect.innerHTML = "";
 
-  marmitas[diaAtual].forEach((m, index) => {
+  state.marmitas[state.diaAtual].forEach((marmita, index) => {
     const option = document.createElement("option");
     option.value = index;
-    option.textContent = m.nome;
-    select.appendChild(option);
+    option.textContent = marmita.nome;
+    elements.marmitaSelect.appendChild(option);
   });
 
-  select.value = marmitaAtualIndex;
+  elements.marmitaSelect.value = state.marmitaAtualIndex;
 }
 
 // ===============================
-// META
+// CONTROLE DE METAS E STATUS
 // ===============================
 
 function salvarMeta() {
-  const meta = Number(document.getElementById("metaInput").value);
+  const meta = Number(elements.metaInput.value);
 
   if (meta <= 0) {
-    alert("Informe meta válida.");
+    alert("Informe uma meta diária válida.");
     return;
   }
 
-  metaDiaria = meta;
-  atualizarStatusDia();
+  state.metaDiaria = meta;
+  render();
   salvarDados();
 }
 
-function atualizarStatusDia() {
-  if (metaDiaria <= 0) return;
-
-  let totalDia = 0;
-
-  marmitas[diaAtual].forEach(m => {
-    m.alimentos.forEach(a => {
-      totalDia += a.kcal;
-    });
-  });
-
-  const status = document.getElementById("statusDia");
-
-  status.textContent =
-    totalDia <= metaDiaria ? "Dentro da meta" : "Acima da meta";
-}
-
-// ===============================
-// TOTAL DIA
-// ===============================
-
-function atualizarTotalDia() {
-  let totalDia = 0;
-
-  marmitas[diaAtual].forEach(m => {
-    m.alimentos.forEach(a => {
-      totalDia += a.kcal;
-    });
-  });
-
-  document.getElementById("totalCal").textContent =
-    totalDia.toFixed(0);
-
-  atualizarStatusDia();
-}
-
-// ===============================
-// TOTAL SEMANA
-// ===============================
-
-function atualizarTotalSemana() {
-  let totalSemana = 0;
-
-  for (let dia in marmitas) {
-    marmitas[dia].forEach(m => {
-      m.alimentos.forEach(a => {
-        totalSemana += a.kcal;
-      });
-    });
-  }
-
-  document.getElementById("totalSemana").textContent =
-    totalSemana.toFixed(0);
-}
-
-// ===============================
-// INICIALIZAÇÃO CORRETA
-// ===============================
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  carregarDados();
-
-  document.getElementById("diaSelect").value = diaAtual;
-  document.getElementById("metaInput").value = metaDiaria;
-
-  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
-    marmitas[diaAtual] = [];
-    criarNovaMarmita();
-  } else {
-    atualizarSelectMarmitas();
-    atualizarLista();
-  }
-
-  atualizarTotalSemana();
-});
-
-// ===============================
-// REMOVER MARMITA
-// ===============================
-
-function removerMarmita() {
-
-  if (!marmitas[diaAtual] || marmitas[diaAtual].length === 0) {
+function atualizarStatusDia(totalDia) {
+  if (state.metaDiaria <= 0) {
+    elements.statusDia.textContent = "Defina uma meta diária";
+    elements.statusDia.className = "";
     return;
   }
 
-  const confirmar = confirm("Deseja realmente remover esta marmita?");
+  // Se o total do dia estiver muito próximo da meta (ex: entre 90% e 100%),
+  // ou se você quiser usar regras específicas de "Levemente acima", adapte aqui.
+  if (totalDia > state.metaDiaria) {
+    elements.statusDia.textContent = "Acima da meta";
+    elements.statusDia.className = "status-perigo";
+  } else if (totalDia >= state.metaDiaria * 0.9) {
+    elements.statusDia.textContent = "Próximo à meta";
+    elements.statusDia.className = "status-alerta";
+  } else {
+    elements.statusDia.textContent = "Dentro da meta";
+    elements.statusDia.className = "status-dentro";
+  }
+}
+
+// ===============================
+// REMOVER MARMITA INTEIRA
+// ===============================
+
+function removerMarmita() {
+  const marmitasDia = state.marmitas[state.diaAtual];
+  if (marmitasDia.length === 0) return;
+
+  const confirmar = confirm(
+    "Deseja realmente remover esta marmita por completo?",
+  );
   if (!confirmar) return;
 
-  marmitas[diaAtual].splice(marmitaAtualIndex, 1);
+  marmitasDia.splice(state.marmitaAtualIndex, 1);
 
-  // Ajustar índice
-  if (marmitaAtualIndex > 0) {
-    marmitaAtualIndex--;
-  } else {
-    marmitaAtualIndex = 0;
+  if (state.marmitaAtualIndex > 0) {
+    state.marmitaAtualIndex--;
   }
 
-  // Se não existir mais nenhuma marmita, cria uma nova vazia
-  if (marmitas[diaAtual].length === 0) {
+  if (marmitasDia.length === 0) {
     criarNovaMarmita();
   } else {
-    atualizarSelectMarmitas();
-    atualizarLista();
+    render();
     salvarDados();
   }
 }
+
+// ===============================
+// INICIALIZAÇÃO da APLICAÇÃO
+// ===============================
+
+document.addEventListener("DOMContentLoaded", () => {
+  carregarDados();
+
+  elements.diaSelect.value = state.diaAtual;
+  elements.metaInput.value = state.metaDiaria || "";
+
+  if (state.marmitas[state.diaAtual].length === 0) {
+    criarNovaMarmita();
+  } else {
+    render();
+  }
+});

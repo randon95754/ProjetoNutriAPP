@@ -1,136 +1,313 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Nutri App</title>
+  <head>
+    <meta charset="UTF-8" />
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4CAF50">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutri App</title>
 
-  <link rel="stylesheet" href="style.css" />
-</head>
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
 
-<body>
+    <meta name="theme-color" content="#4CAF50" />
 
-<header>
-  <h1>🍽️ Nutri App</h1>
-  <p>Seu controle alimentar de forma leve e divertida</p>
-</header>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<nav class="tabs">
-  <button type="button" onclick="mostrarAba('marmita')">Marmita Semanal</button>
-  <button type="button" onclick="mostrarAba('comi')">O que já comi</button>
-  <button type="button" onclick="mostrarAba('conquistas')">Conquistas</button>
-  <button type="button" onclick="mostrarAba('avaliacao')">Avaliação Diária</button>
-</nav>
+    <meta
+      name="description"
+      content="Controle alimentar semanal com cálculo de calorias."
+    />
 
-<main>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-  <!-- MARMITA -->
-  <section id="marmita" class="aba ativa">
-    <h2>Marmita da Semana</h2>
+  <body>
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
 
-    <label>Meta diária (kcal)</label>
-    <input id="metaInput" type="number" placeholder="Ex: 2200" />
-    <button type="button" onclick="salvarMeta()">Salvar Meta</button>
+    <header class="app-header">
+      <h1>🍽️ Nutri App</h1>
 
-    <hr>
+      <p>Seu controle alimentar de forma leve e divertida</p>
+    </header>
 
-    <label>Dia da semana</label>
-    <select id="diaSelect" onchange="trocarMarmita()">
-      <option value="segunda">Segunda</option>
-      <option value="terca">Terça</option>
-      <option value="quarta">Quarta</option>
-      <option value="quinta">Quinta</option>
-      <option value="sexta">Sexta</option>
-      <option value="sabado">Sábado</option>
-      <option value="domingo">Domingo</option>
-    </select>
+    <!-- ========================= -->
+    <!-- NAVEGAÇÃO -->
+    <!-- ========================= -->
 
-    <label>Marmitas do dia</label>
-    <select id="marmitaSelect" onchange="trocarMarmitaSelecionada()"></select>
-    <button type="button" onclick="criarNovaMarmita()">+ Nova Marmita</button>
-    <button onclick="removerMarmita()">Remover Marmita</button>
-    <hr>
+    <nav class="tabs" aria-label="Navegação principal">
+      <button type="button" class="tab-button active-tab" data-tab="marmita">
+        Marmita Semanal
+      </button>
 
-    <label>Alimento</label>
-    <select id="alimentoSelect">
-      <option value="">Selecione</option>
-      <option value="frango">Frango</option>
-      <option value="arroz">Arroz</option>
-      <option value="ovo">Ovo</option>
-      <option value="carne">Carne</option>
-      <option value="batata">Batata</option>
-      <option value="macarrao">Macarrão</option>
-      <option value="creme_galinha">Creme de galinha</option>
-      <option value="maca">Maçã</option>
-    </select>
+      <button type="button" class="tab-button" data-tab="comi">
+        O que já comi
+      </button>
 
-    <label>Gramas</label>
-    <input id="gramasInput" type="number" placeholder="Ex: 200" />
+      <button type="button" class="tab-button" data-tab="conquistas">
+        Conquistas
+      </button>
 
-    <button type="button" onclick="addAlimento()">Adicionar</button>
+      <button type="button" class="tab-button" data-tab="avaliacao">
+        Avaliação Diária
+      </button>
+    </nav>
 
-    <hr>
+    <!-- ========================= -->
+    <!-- CONTEÚDO -->
+    <!-- ========================= -->
 
-    <ul id="marmitaList"></ul>
+    <main class="container">
+      <!-- ========================= -->
+      <!-- MARMITA -->
+      <!-- ========================= -->
 
-    <p>Total da marmita atual: 
-      <strong><span id="totalMarmitaAtual">0</span> kcal</strong>
-    </p>
+      <section id="marmita" class="aba ativa">
+        <h2>Marmita da Semana</h2>
 
-    <p>Total do dia: 
-      <strong><span id="totalCal">0</span> kcal</strong>
-    </p>
+        <!-- META -->
 
-    <p id="statusDia"></p>
+        <div class="form-group">
+          <label for="metaInput"> Meta diária (kcal) </label>
 
-    <hr>
+          <input id="metaInput" type="number" placeholder="Ex: 2200" min="0" />
 
-    <p>Total da semana: 
-      <strong><span id="totalSemana">0</span> kcal</strong>
-    </p>
-  </section>
+          <button id="btnSalvarMeta" type="button">Salvar Meta</button>
+        </div>
 
-  <!-- OUTRAS ABAS -->
-  <section id="comi" class="aba">
-    <h2>O que já comi</h2>
-    <p>Em desenvolvimento</p>
-  </section>
+        <hr />
 
-  <section id="conquistas" class="aba">
-    <h2>Conquistas</h2>
-    <p>Em desenvolvimento</p>
-  </section>
+        <!-- DIA -->
 
-  <section id="avaliacao" class="aba">
-    <h2>Avaliação Diária</h2>
-    <p>Em desenvolvimento</p>
-  </section>
+        <div class="form-group">
+          <label for="diaSelect"> Dia da semana </label>
 
-</main>
+          <select id="diaSelect">
+            <option value="segunda">Segunda</option>
 
-<script src="script.js"></script>
+            <option value="terca">Terça</option>
 
-<script>
-  function mostrarAba(id) {
-    document.querySelectorAll('.aba').forEach(aba => {
-      aba.classList.remove('ativa');
-    });
-    document.getElementById(id).classList.add('ativa');
-  }
+            <option value="quarta">Quarta</option>
 
-  // Registro do Service Worker (PWA)
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("service-worker.js")
-        .then(() => console.log("Service Worker registrado"))
-        .catch(err => console.log("Erro no SW:", err));
-    });
-  }
-</script>
+            <option value="quinta">Quinta</option>
 
-</body>
+            <option value="sexta">Sexta</option>
+
+            <option value="sabado">Sábado</option>
+
+            <option value="domingo">Domingo</option>
+          </select>
+        </div>
+
+        <!-- MARMITAS -->
+
+        <div class="form-group">
+          <label for="marmitaSelect"> Marmitas do dia </label>
+
+          <select id="marmitaSelect"></select>
+
+          <div class="button-group">
+            <button id="btnNovaMarmita" type="button">+ Nova Marmita</button>
+
+            <button id="btnRemoverMarmita" type="button">
+              Remover Marmita
+            </button>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- ALIMENTOS -->
+
+        <div class="form-group">
+          <label for="alimentoSelect"> Alimento </label>
+
+          <select id="alimentoSelect">
+            <option value="">Selecione</option>
+
+            <option value="frango">Frango</option>
+
+            <option value="arroz">Arroz</option>
+
+            <option value="ovo">Ovo</option>
+
+            <option value="carne">Carne</option>
+
+            <option value="batata">Batata</option>
+
+            <option value="macarrao">Macarrão</option>
+
+            <option value="creme_galinha">Creme de galinha</option>
+
+            <option value="maca">Maçã</option>
+          </select>
+        </div>
+
+        <!-- GRAMAS -->
+
+        <div class="form-group">
+          <label for="gramasInput"> Gramas </label>
+
+          <input id="gramasInput" type="number" placeholder="Ex: 200" min="0" />
+        </div>
+
+        <button id="btnAdicionarAlimento" type="button">Adicionar</button>
+
+        <hr />
+
+        <!-- LISTA -->
+
+        <ul id="marmitaList" class="marmita-list"></ul>
+
+        <!-- TOTAIS -->
+
+        <div class="totais">
+          <p>
+            Total da marmita atual:
+            <strong>
+              <span id="totalMarmitaAtual"> 0 </span>
+              kcal
+            </strong>
+          </p>
+
+          <p>
+            Total do dia:
+            <strong>
+              <span id="totalCal">0</span>
+              kcal
+            </strong>
+          </p>
+
+          <p id="statusDia" class="status-dia"></p>
+
+          <hr />
+
+          <p>
+            Total da semana:
+            <strong>
+              <span id="totalSemana"> 0 </span>
+              kcal
+            </strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- ========================= -->
+      <!-- O QUE JÁ COMI -->
+      <!-- ========================= -->
+
+      <section id="comi" class="aba">
+        <h2>O que já comi</h2>
+
+        <p>Em desenvolvimento</p>
+      </section>
+
+      <!-- ========================= -->
+      <!-- CONQUISTAS -->
+      <!-- ========================= -->
+
+      <section id="conquistas" class="aba">
+        <h2>Conquistas</h2>
+
+        <p>Em desenvolvimento</p>
+      </section>
+
+      <!-- ========================= -->
+      <!-- AVALIAÇÃO -->
+      <!-- ========================= -->
+
+      <section id="avaliacao" class="aba">
+        <h2>Avaliação Diária</h2>
+
+        <p>Em desenvolvimento</p>
+      </section>
+    </main>
+
+    <!-- ========================= -->
+    <!-- SCRIPT PRINCIPAL -->
+    <!-- ========================= -->
+
+    <script src="script.js"></script>
+
+    <!-- ========================= -->
+    <!-- EVENTOS -->
+    <!-- ========================= -->
+
+    <script>
+      // =========================
+      // TABS
+      // =========================
+
+      const tabButtons = document.querySelectorAll(".tab-button");
+
+      const abas = document.querySelectorAll(".aba");
+
+      function mostrarAba(id) {
+        abas.forEach((aba) => {
+          aba.classList.remove("ativa");
+        });
+
+        tabButtons.forEach((btn) => {
+          btn.classList.remove("active-tab");
+        });
+
+        document.getElementById(id).classList.add("ativa");
+
+        document
+          .querySelector(`[data-tab="${id}"]`)
+          .classList.add("active-tab");
+      }
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          mostrarAba(button.dataset.tab);
+        });
+      });
+
+      // =========================
+      // EVENTOS APP
+      // =========================
+
+      document
+        .getElementById("diaSelect")
+        .addEventListener("change", trocarMarmita);
+
+      document
+        .getElementById("marmitaSelect")
+        .addEventListener("change", trocarMarmitaSelecionada);
+
+      document
+        .getElementById("btnSalvarMeta")
+        .addEventListener("click", salvarMeta);
+
+      document
+        .getElementById("btnNovaMarmita")
+        .addEventListener("click", criarNovaMarmita);
+
+      document
+        .getElementById("btnRemoverMarmita")
+        .addEventListener("click", removerMarmita);
+
+      document
+        .getElementById("btnAdicionarAlimento")
+        .addEventListener("click", addAlimento);
+
+      // =========================
+      // PWA
+      // =========================
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("service-worker.js")
+            .then(() => {
+              console.log("Service Worker registrado");
+            })
+            .catch((err) => {
+              console.error("Erro no Service Worker:", err);
+            });
+        });
+      }
+    </script>
+  </body>
 </html>
